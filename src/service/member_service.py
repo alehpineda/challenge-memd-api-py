@@ -1,23 +1,57 @@
 import requests
+import json
 
 import src.constants as constants
 
+from fastapi import HTTPException
+
+from src.dao.member_dao import retrieve_member_dao, create_primary_member_dao
+from src.models.primary_member_model import PrimaryMember
+
 
 def retrieve_member_service(member_id: int, token: str) -> requests.Response:
+    """Service function that retrieves a member
+
+    Args:
+        member_id (int): Member Id
+        token (str): Bearer token
+
+    Returns:
+        requests.Response: HTTP response
+    """
     try:
-        headers = {"Authorization": token}
-        response = requests.get(
-            f"http://cratebind-challenge-api.com/memd/members/{member_id}",
-            headers=headers,
-            timeout=30,
+        return retrieve_member_dao(member_id, token)
+    except Exception:
+        raise
+
+
+def create_primary_member_service(
+    member: PrimaryMember, token: str
+) -> requests.Response:
+    try:
+        # validate external_id
+        validate_external_id = _validate_external_id(
+            member_id=member.member.external_id, token=token
         )
-        response.raise_for_status()  # Raises http error if any
-        return response
-    except requests.exceptions.SSLError as exp:
-        return {"SSLError": exp}
-    except requests.exceptions.Timeout as exp:
-        return {"Timeout Exception": exp}
-    except requests.exceptions.RequestException as exp:
-        return {"Request Exception": exp}
-    except Exception as exp:
-        return {"General Exception": exp}
+        # member validation is done in the model
+        if validate_external_id:
+            # post member request
+            response = create_primary_member_dao(member=member, token=token)
+            return response
+    except Exception:
+        raise
+
+
+def _validate_external_id(member_id: int, token: str):
+    try:
+        response = retrieve_member_dao(member_id=member_id, token=token)
+        json_data = response.json()
+        if constants.ERROR in json_data.keys():
+            return True
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"External ID:{member_id} already exist",
+            )
+    except HTTPException:
+        raise
