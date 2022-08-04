@@ -1,5 +1,4 @@
 import requests
-import json
 
 import src.constants as constants
 
@@ -28,6 +27,15 @@ def retrieve_member_service(member_id: int, token: str) -> requests.Response:
 def create_primary_member_service(
     member: PrimaryMember, token: str
 ) -> requests.Response:
+    """Service function that creates a primary member service
+
+    Args:
+        member (PrimaryMember): Primary member payload
+        token (str): Bearer token
+
+    Returns:
+        requests.Response: HTTP post request response
+    """
     try:
         # validate external_id
         validate_external_id = _validate_external_id(
@@ -42,7 +50,19 @@ def create_primary_member_service(
         raise
 
 
-def _validate_external_id(member_id: int, token: str):
+def _validate_external_id(member_id: int, token: str) -> bool:
+    """Function that validates member external id
+
+    Args:
+        member_id (int): External member id
+        token (str): Bearer token
+
+    Raises:
+        HTTPException: Raises 400 error if id already exists
+
+    Returns:
+        bool: Returns True if id does not exists
+    """
     try:
         response = retrieve_member_dao(member_id=member_id, token=token)
         json_data = response.json()
@@ -51,7 +71,7 @@ def _validate_external_id(member_id: int, token: str):
         else:
             raise HTTPException(
                 status_code=400,
-                detail=f"External ID:{member_id} already exist",
+                detail=f"External ID: {member_id} already exist",
             )
     except HTTPException:
         raise

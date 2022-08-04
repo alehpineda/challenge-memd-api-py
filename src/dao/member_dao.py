@@ -1,5 +1,6 @@
 import requests
 import src.constants as constants
+
 from src.models.primary_member_model import PrimaryMember
 from fastapi.encoders import jsonable_encoder
 
@@ -12,7 +13,7 @@ def retrieve_member_dao(member_id: int, token: str) -> requests.Response:
         token (str): Bearer token
 
     Returns:
-        requests.Response: HTTP response
+        requests.Response: HTTP get request response
     """
     try:
         headers = {"Authorization": token}
@@ -44,7 +45,7 @@ def create_primary_member_dao(
         token (str): Bearer token
 
     Returns:
-        requests.Response: HTTP response
+        requests.Response: HTTP post resquest response
     """
     try:
         headers = {"Authorization": token}

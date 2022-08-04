@@ -40,8 +40,19 @@ def retrieve_member_controller(
 def create_primary_member_controller(
     member: PrimaryMember, token: str = Security(auth_scheme)
 ):
+    """Create primary member controller
+
+    Args:
+        member (PrimaryMember): Primary member payload
+        token (str, optional): Bearer token. Defaults to Security(auth_scheme).
+
+    Returns:
+        Json: Json response
+    """
     try:
         response = create_primary_member_service(member, token)
         return response.json()
     except Exception:
         raise
+
+
