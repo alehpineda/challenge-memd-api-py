@@ -1,11 +1,12 @@
 import src.constants as constants
 
-from fastapi import APIRouter, HTTPException, Security
+from fastapi import APIRouter, Security
 from fastapi.security.api_key import APIKeyHeader
-from src.models.primary_member_model import PrimaryMember
+from src.models.member_model import DependentMember, PrimaryMember
 from src.service.member_service import (
     retrieve_member_service,
     create_primary_member_service,
+    create_dependent_member_service,
 )
 
 
@@ -56,3 +57,18 @@ def create_primary_member_controller(
         raise
 
 
+@router.post(
+    "/create/dependent/{primary_member_id}", tags=[constants.POST_TAG]
+)
+def create_dependent_member_controller(
+    primary_member_id: int,
+    dependent_member: DependentMember,
+    token: str = Security(auth_scheme),
+):
+    try:
+        response = create_dependent_member_service(
+            primary_member_id, dependent_member, token
+        )
+        return response.json()
+    except Exception:
+        raise

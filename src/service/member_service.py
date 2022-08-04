@@ -1,3 +1,5 @@
+import json
+from urllib import response
 import requests
 
 import src.constants as constants
@@ -5,7 +7,7 @@ import src.constants as constants
 from fastapi import HTTPException
 
 from src.dao.member_dao import retrieve_member_dao, create_primary_member_dao
-from src.models.primary_member_model import PrimaryMember
+from src.models.member_model import DependentMember, PrimaryMember
 
 
 def retrieve_member_service(member_id: int, token: str) -> requests.Response:
@@ -75,3 +77,34 @@ def _validate_external_id(member_id: int, token: str) -> bool:
             )
     except HTTPException:
         raise
+
+
+def create_dependent_member_service(
+    primary_member_id: int, dependent_member: DependentMember, token: str
+) -> requests.Response:
+    try:
+        # validate primary member exists
+        primary_response = _validate_primary_member(primary_member_id=primary_member_id, token=token)
+        if primary_response:
+            pass
+            # if dependent does not have address, use primary
+            # dependent member validation done in model
+            # post dependent request
+    except Exception:
+        raise
+
+
+def _validate_primary_member(primary_member_id: int, token: str):
+    response = retrieve_member_dao(primary_member_id, token)
+    json_data = response.json()
+    if constants.EXTERNAL_ID in json_data.keys():
+        return response
+    else:
+        raise HTTPException(
+                status_code=400,
+                detail=f"External ID: {primary_member_id} does not exist",
+            )
+
+
+def _check_dependent_address():
+    pass
