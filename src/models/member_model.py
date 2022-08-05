@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 from datetime import date
-from src.constants import (
+from constants import (
     Relationship,
     Gender,
     Plancode,

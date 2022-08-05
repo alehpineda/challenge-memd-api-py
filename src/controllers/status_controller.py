@@ -1,4 +1,4 @@
-import src.constants as constants
+import constants
 
 from typing import Dict
 from fastapi import APIRouter

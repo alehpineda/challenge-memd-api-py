@@ -1,8 +1,8 @@
-import src.constants as constants
+import constants
 
 from fastapi import FastAPI
 
-from src.controllers import member_controller, status_controller
+from controllers import member_controller, status_controller
 
 # fastapi starting and config
 app = FastAPI()

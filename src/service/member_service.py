@@ -1,15 +1,15 @@
 import requests
 
-import src.constants as constants
+import constants
 
 from fastapi import HTTPException
 
-from src.dao.member_dao import (
+from dao.member_dao import (
     retrieve_member_dao,
     create_primary_member_dao,
     create_dependent_member_dao,
 )
-from src.models.member_model import DependentMember, PrimaryMember
+from models.member_model import DependentMember, PrimaryMember
 
 
 def retrieve_member_service(member_id: int, token: str) -> requests.Response:

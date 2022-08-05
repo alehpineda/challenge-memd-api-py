@@ -1,9 +1,9 @@
-import src.constants as constants
+import constants
 
 from fastapi import APIRouter, Security
 from fastapi.security.api_key import APIKeyHeader
-from src.models.member_model import DependentMember, PrimaryMember
-from src.service.member_service import (
+from models.member_model import DependentMember, PrimaryMember
+from service.member_service import (
     retrieve_member_service,
     create_primary_member_service,
     create_dependent_member_service,
@@ -24,7 +24,7 @@ def retrieve_member_controller(
     """Retrive member controller
 
     Args:
-        member_id (int): _description_
+        member_id (int): Member id
         token (str, optional): Bearer Token. Defaults to Security(auth_scheme).
 
     Returns:
@@ -37,7 +37,7 @@ def retrieve_member_controller(
         raise
 
 
-@router.post("/create", tags=[constants.POST_TAG])
+@router.post("/primary", tags=[constants.POST_TAG])
 def create_primary_member_controller(
     member: PrimaryMember, token: str = Security(auth_scheme)
 ):
@@ -58,7 +58,7 @@ def create_primary_member_controller(
 
 
 @router.post(
-    "/create/dependent/{primary_member_id}", tags=[constants.POST_TAG]
+    "/dependent/{primary_member_id}", tags=[constants.POST_TAG]
 )
 def create_dependent_member_controller(
     primary_member_id: int,

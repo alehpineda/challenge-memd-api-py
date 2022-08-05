@@ -1,7 +1,7 @@
 import requests
-import src.constants as constants
+import constants
 
-from src.models.member_model import DependentMember, PrimaryMember
+from models.member_model import DependentMember, PrimaryMember
 from fastapi.encoders import jsonable_encoder
 
 
