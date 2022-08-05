@@ -16,6 +16,7 @@ class Member(BaseModel):
     Args:
         BaseModel (): Pydantic base model
     """
+
     external_id: int
     relationship: Relationship  # Valid value: 18
     first_name: str
@@ -37,6 +38,7 @@ class Dependent(Member):
     Args:
         Member (_type_): Inherits from Member class
     """
+
     relationship: DependantRelationship
     street_1: Optional[str] = ""  # Optional
     city: Optional[str] = ""  # Optional
@@ -50,6 +52,7 @@ class PrimaryMember(BaseModel):
     Args:
         BaseModel (_type_): Pydantic base model
     """
+
     member: Member
 
 
@@ -59,4 +62,5 @@ class DependentMember(BaseModel):
     Args:
         BaseModel (_type_): Pydantic base model
     """
+
     member: Dependent

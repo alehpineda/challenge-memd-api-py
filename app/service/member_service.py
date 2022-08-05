@@ -116,7 +116,9 @@ def create_dependent_member_service(
         raise
 
 
-def _validate_primary_member(primary_member_id: int, token: str) -> requests.Response:
+def _validate_primary_member(
+    primary_member_id: int, token: str
+) -> requests.Response:
     """Utility function that validates if the primary member exists
 
     Args:

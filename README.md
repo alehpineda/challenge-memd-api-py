@@ -3,60 +3,120 @@ Python API Code challenge
 
 ### 3rd API Party Integration
 
-Lets prototype a 3rd party API integration. This 3rd party integration will have to be built from scratch, because there are gems specific to this integration that are currently available. Here are the requirements:
+### Prerequisites
 
-We’ll use a Bearer token to authenticate all our POST & GET requests by adding it into headers. We'll supply you the token via email and you send it over in an Authorization header. We’ll need to accommodate these endpoints:
+- Have python 3.10 installed in your local machine
+- Docker is optional
 
-  - POST - create primary member
-      - This takes the below payload and creates a Primary Member
-  - POST - create dependent member
-      - This takes the below payload and creates a Dependent Member
-  - GET - retrieve member
-      - Simply retrieves a Member via the external_id field (which you get to define)
+### How to use this repository
+
+1. Download or clone this repository
+
+```bash
+git clone https://github.com/alehpineda/challenge-memd-api-py.git
+```
+
+2. Install requirements
+
+```bash
+cd challenge-memd-api-py
+pip install -r requirements.txt
+```
+
+3. Run the api
+
+```bash
+# inside folder challenge-memd-api-py
+cd app
+uvicorn main:app --port --reload
+```
+
+4. Go to the swagger docs to test the api. You will need a bearer token.
+
+```bash
+# Uvicorn uses 8000 by default. You can change it 
+localhost:8000/docs
+```
+
+5. If you have Docker installed, you can build the image and run it. In this case you can go to `localhost:80/docs` to check the swagger docs.
+
+```bash
+# inside folder challenge-memd-api-py
+docker image build -t challenge_api_py .
+docker container run -d -p 80:80 challenge_api_py
+```
+
+6. You can also use `docker-compose`. If you want to change the port, you can do it in the `docker-compose.yml` file.
+
+```bash
+# inside folder challenge-memd-api-py
+docker-compose up -d
+# If you want to stop it
+docker-compose down
+```
 
 
-### Endpoint Information:
+### Endpoints
 
-##### Payload Notes:
+#### Note: All endpoints require a bearer token
 
-You'll need to define the external_id field. The only restrictions are it must be an integer, and its unique. This will act as a primary key for the Member object. The address fields need to be populated with a 'home' address. This distinction is found on the Address object under the is_type attribute. Members can have both a home and a mailing address. If a dependent does not have a home address, then we will use the primary's home address. 
+- /v1/member/primary
+  - Post request - This takes the below payload and creates a Primary Member
+  - Payload:
 
-  - POST#create for primary members:
-    - URL: http://cratebind-challenge-api.com/memd/members
-    - All fields are required except street_2
-    - Response will be the member
-    - Payload:
+```json
+      {
+      "member": { 
+        "external_id":    1010,
+        "relationship":   18,  // Valid value:    18
+        "first_name":     "Test1010",
+        "last_name":      "Test1010",
+        "gender":         "F",  // Valid values:   "M" or "F"
+        "plancode":       "11AA22BB", // Valid value:    "11AA22BB"
+        "street_1":       "742 Evergreen Terrace",
+        "street_2":       "APT 123",
+        "city":           "Springfield",
+        "state":          "NY",  // # Example values: "FL" or "NY"
+        "zipcode":        "12345",
+        "dob":            "1980-01-01",
+        "benefit_start":  "2022-08-01"
+      }
+    }
+```
 
-```ruby
+- /v1/member/dependant/:primary_member_id
+  - Post request - This takes the below payload and creates a Dependent Member
+  - Notes: The payload is identical to POST#create for primary members with this exception
+
+```json
         {
-          member: { 
-            external_id:    integer,
-            relationship:   integer,    # Valid value:    18
-            first_name:     string,
-            last_name:      string,
-            gender:         string,     # Valid values:   "M" or "F"
-            plancode:       string,     # Valid value:    "11AA22BB"
-            street_1:       string,
-            street_2:       string,
-            city:           string,
-            state:          string,     # Example values: "FL" or "NY"
-            zipcode:        string,
-            dob:            date,
-            benefit_start:  date
+          "relationship":   "integer",    //Valid value:    19
+        }
+```
+
+  - Payload:
+
+```json
+        {
+          "member": { 
+            "external_id":    1011,
+            "relationship":   19,
+            "first_name":     "Test1011",
+            "last_name":      "Test1011",
+            "gender":         "F",
+            "plancode":       "11AA22BB",
+            "street_1":       "",
+            "street_2":       "",
+            "city":           "",
+            "state":          "",
+            "zipcode":        "",
+            "dob":            "1980-01-01",
+            "benefit_start":  "2022-08-01"
           }
         }
+
 ```
 
+- /v1/member/retrieve/:member_id
+  - Simply retrieves a Member via the external_id field
 
- - POST#create for dependent members:
-    - URL: http://cratebind-challenge-api.com/memd/members/:primary_external_id
-     - Response will be the member
-    - Payload: The payload is identical to POST#create for primary members with this exception
-```
-        {
-          relationship:   integer,    Valid value:    19
-        }
-```
-  - GET#retrieve member:
-    - URL: http://cratebind-challenge-api.com/memd/members/:id
-    - Response will be the member

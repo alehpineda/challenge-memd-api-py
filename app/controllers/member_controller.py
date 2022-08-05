@@ -57,9 +57,7 @@ def create_primary_member_controller(
         raise
 
 
-@router.post(
-    "/dependent/{primary_member_id}", tags=[constants.POST_TAG]
-)
+@router.post("/dependent/{primary_member_id}", tags=[constants.POST_TAG])
 def create_dependent_member_controller(
     primary_member_id: int,
     dependent_member: DependentMember,
