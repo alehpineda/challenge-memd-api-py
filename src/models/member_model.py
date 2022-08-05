@@ -11,6 +11,11 @@ from src.constants import (
 
 
 class Member(BaseModel):
+    """Member class
+
+    Args:
+        BaseModel (): Pydantic base model
+    """
     external_id: int
     relationship: Relationship  # Valid value: 18
     first_name: str
@@ -26,7 +31,12 @@ class Member(BaseModel):
     benefit_start: date
 
 
-class Dependant(Member):
+class Dependent(Member):
+    """Dependent Member class
+
+    Args:
+        Member (_type_): Inherits from Member class
+    """
     relationship: DependantRelationship
     street_1: Optional[str] = ""  # Optional
     city: Optional[str] = ""  # Optional
@@ -35,8 +45,18 @@ class Dependant(Member):
 
 
 class PrimaryMember(BaseModel):
+    """Primary Member class
+
+    Args:
+        BaseModel (_type_): Pydantic base model
+    """
     member: Member
 
 
 class DependentMember(BaseModel):
-    member: Dependant
+    """Dependent Member class
+
+    Args:
+        BaseModel (_type_): Pydantic base model
+    """
+    member: Dependent

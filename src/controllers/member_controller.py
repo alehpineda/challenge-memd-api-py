@@ -65,6 +65,16 @@ def create_dependent_member_controller(
     dependent_member: DependentMember,
     token: str = Security(auth_scheme),
 ):
+    """Create dependent member controller
+
+    Args:
+        primary_member_id (int): Primary member id
+        dependent_member (DependentMember): Dependent member payload
+        token (str, optional): Bearer token. Defaults to Security(auth_scheme).
+
+    Returns:
+        Json: Json response
+    """
     try:
         response = create_dependent_member_service(
             primary_member_id, dependent_member, token

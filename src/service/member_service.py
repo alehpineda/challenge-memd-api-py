@@ -55,7 +55,7 @@ def create_primary_member_service(
 
 
 def _validate_external_id(member_id: int, token: str) -> bool:
-    """Function that validates member external id
+    """Utility function that validates member external id
 
     Args:
         member_id (int): External member id
@@ -84,6 +84,16 @@ def _validate_external_id(member_id: int, token: str) -> bool:
 def create_dependent_member_service(
     primary_member_id: int, dependent_member: DependentMember, token: str
 ) -> requests.Response:
+    """Service function that creates a dependent member
+
+    Args:
+        primary_member_id (int): Primary member id
+        dependent_member (DependentMember): Dependent member model
+        token (str): Bearer token
+
+    Returns:
+        requests.Response: HTTP post response request
+    """
     try:
         # validate primary member exists
         primary_response = _validate_primary_member(
@@ -106,7 +116,19 @@ def create_dependent_member_service(
         raise
 
 
-def _validate_primary_member(primary_member_id: int, token: str):
+def _validate_primary_member(primary_member_id: int, token: str) -> requests.Response:
+    """Utility function that validates if the primary member exists
+
+    Args:
+        primary_member_id (int): Primary member id
+        token (str): Bearer token
+
+    Raises:
+        HTTPException: If primary member does not exists
+
+    Returns:
+        requests.Response: HTTP get response request
+    """
     response = retrieve_member_dao(primary_member_id, token)
     json_data = response.json()
     if constants.EXTERNAL_ID in json_data.keys():
@@ -121,6 +143,12 @@ def _validate_primary_member(primary_member_id: int, token: str):
 def _update_dependent_address(
     dependent_member: DependentMember, primary_response: requests.Response
 ) -> None:
+    """Utility function that updates the dependant address if empty
+
+    Args:
+        dependent_member (DependentMember): Dependent member model
+        primary_response (requests.Response): Primary member HTTP response
+    """
     if all(
         [
             dependent_member.member.street_1,
