@@ -95,3 +95,4 @@ class State(Enum):
     West_Virginia = "WV"
     Wisconsin = "WI"
     Wyoming = "WY"
+    X = ""

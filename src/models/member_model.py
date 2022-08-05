@@ -18,7 +18,7 @@ class Member(BaseModel):
     gender: Gender  # Valid values: "M" or "F"
     plancode: Plancode  # Valid value: "11AA22BB"
     street_1: str
-    street_2: Optional[str] = None  # Optional
+    street_2: Optional[str] = ""  # Optional
     city: str
     state: State  # Example values: "FL" or "NY"
     zipcode: str
@@ -28,7 +28,10 @@ class Member(BaseModel):
 
 class Dependant(Member):
     relationship: DependantRelationship
-    street_1: Optional[str] = None  # Optional
+    street_1: Optional[str] = ""  # Optional
+    city: Optional[str] = ""  # Optional
+    state: Optional[State] = ""  # Optional | Example values: "FL" or "NY"
+    zipcode: Optional[str] = ""  # Optional
 
 
 class PrimaryMember(BaseModel):

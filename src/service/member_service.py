@@ -1,12 +1,14 @@
-import json
-from urllib import response
 import requests
 
 import src.constants as constants
 
 from fastapi import HTTPException
 
-from src.dao.member_dao import retrieve_member_dao, create_primary_member_dao
+from src.dao.member_dao import (
+    retrieve_member_dao,
+    create_primary_member_dao,
+    create_dependent_member_dao,
+)
 from src.models.member_model import DependentMember, PrimaryMember
 
 
@@ -84,12 +86,22 @@ def create_dependent_member_service(
 ) -> requests.Response:
     try:
         # validate primary member exists
-        primary_response = _validate_primary_member(primary_member_id=primary_member_id, token=token)
-        if primary_response:
-            pass
+        primary_response = _validate_primary_member(
+            primary_member_id=primary_member_id, token=token
+        )
+        # validate dependent external id does not exists
+        dependent_id_validation = _validate_external_id(
+            dependent_member.member.external_id, token
+        )
+        # dependent member validation done in model
+        if primary_response and dependent_id_validation:
             # if dependent does not have address, use primary
-            # dependent member validation done in model
+            _update_dependent_address(dependent_member, primary_response)
             # post dependent request
+            dependent_response = create_dependent_member_dao(
+                primary_member_id, dependent_member, token
+            )
+            return dependent_response
     except Exception:
         raise
 
@@ -101,10 +113,27 @@ def _validate_primary_member(primary_member_id: int, token: str):
         return response
     else:
         raise HTTPException(
-                status_code=400,
-                detail=f"External ID: {primary_member_id} does not exist",
-            )
+            status_code=400,
+            detail=f"Primary External ID: {primary_member_id} does not exist",
+        )
 
 
-def _check_dependent_address():
-    pass
+def _update_dependent_address(
+    dependent_member: DependentMember, primary_response: requests.Response
+) -> None:
+    if all(
+        [
+            dependent_member.member.street_1,
+            dependent_member.member.city,
+            dependent_member.member.state,
+            dependent_member.member.zipcode,
+        ]
+    ):
+        pass
+    else:
+        json_response = primary_response.json()
+        dependent_member.member.street_1 = json_response.get("street_1")
+        dependent_member.member.street_2 = json_response.get("street_2")
+        dependent_member.member.city = json_response.get("city")
+        dependent_member.member.state = json_response.get("state")
+        dependent_member.member.zipcode = json_response.get("zipcode")
