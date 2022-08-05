@@ -55,6 +55,7 @@ docker-compose up -d
 docker-compose down
 ```
 
+7. Lastly, you can go to [Heroku](https://challenge-memd-api-py.herokuapp.com/docs) and test the api directly from your browser.
 
 ### Endpoints
 
